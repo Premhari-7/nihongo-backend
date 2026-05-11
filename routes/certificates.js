@@ -59,9 +59,16 @@ router.get('/preview/:certId', async (req, res) => {
         }
 
         /* ── Outer frame ── */
+        .cert-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
         .cert-frame {
-            width: 297mm;
-            height: 210mm;
+            width: 1122px;
+            height: 793px;
             background: #f5f0e4;
             border: 16px solid #0d0a04;
             position: relative;
@@ -345,9 +352,49 @@ router.get('/preview/:certId', async (req, res) => {
                 print-color-adjust: exact;
             }
         }
+
+        /* Responsive scaling for all screens smaller than the cert */
+        @media screen and (max-width: 1180px) {
+            body {
+                padding: 0;
+                min-height: 100vh;
+                overflow: hidden;
+            }
+            .cert-container {
+                width: 1122px;
+                height: 793px;
+                min-height: auto;
+            }
+        }
+
+        /* Portrait: scale to fit BOTH width AND height — full cert visible */
+        @media screen and (max-width: 1180px) and (orientation: portrait) {
+            body {
+                align-items: flex-start;
+                justify-content: flex-start;
+                background: #1a1008;
+            }
+            .cert-container {
+                transform: scale(min(calc(100vw / 1122), calc(100vh / 793)));
+                transform-origin: top left;
+            }
+        }
+
+        /* Landscape: scale to viewport width (preserves current perfect layout) */
+        @media screen and (max-width: 1180px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
+            .cert-container {
+                transform: scale(calc(100vw / 1122));
+                transform-origin: top left;
+            }
+        }
     </style>
 </head>
 <body>
+<div class="cert-container">
 <div class="cert-frame">
 
     <div class="watermark">達</div>
@@ -498,6 +545,7 @@ router.get('/preview/:certId', async (req, res) => {
     </div>
 
 </div><!-- /cert-frame -->
+</div><!-- /cert-container -->
 </body>
 </html>`;
 

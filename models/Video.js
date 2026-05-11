@@ -36,4 +36,7 @@ const VideoSchema = new mongoose.Schema({
     }
 });
 
+// Compound index for fast sorted queries (matches GET /api/videos sort pattern)
+VideoSchema.index({ jlptLevel: 1, section: 1, order: 1 });
+
 module.exports = mongoose.model('Video', VideoSchema);
