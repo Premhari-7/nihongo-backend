@@ -14,6 +14,10 @@ router.post('/register', async (req, res) => {
     try {
         const { name, email, password, role, adminCode } = req.body;
 
+        if (typeof email !== 'string' || typeof password !== 'string') {
+            return res.status(400).json({ msg: 'Invalid input types' });
+        }
+
         if (!emailRegex.test(email)) {
             return res.status(400).json({ msg: 'Invalid email format' });
         }
@@ -53,8 +57,8 @@ router.post('/register', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Registration Error:', err);
-        res.status(500).json({ error: err.message, stack: err.stack });
+        console.error('Registration Error:', err.message);
+        res.status(500).json({ msg: 'Server error during registration' });
     }
 });
 
@@ -62,6 +66,10 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        if (typeof email !== 'string' || typeof password !== 'string') {
+            return res.status(400).json({ msg: 'Invalid credentials format' });
+        }
 
         let user = await User.findOne({ email });
         if (!user) {

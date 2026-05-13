@@ -10,8 +10,16 @@ router.post('/', async (req, res) => {
     try {
         const { message } = req.body;
 
-        if (!message) {
-            return res.status(400).json({ msg: 'Message is required' });
+        if (!message || typeof message !== 'string') {
+            return res.status(400).json({ msg: 'Message is required and must be text' });
+        }
+
+        // Basic Prompt Injection Protection
+        const blockedKeywords = ['ignore previous', 'forget previous', 'system prompt', 'you are not', 'disregard', 'bypass'];
+        const isInjectionAttempt = blockedKeywords.some(kw => message.toLowerCase().includes(kw));
+
+        if (isInjectionAttempt || message.length > 500) {
+            return res.status(400).json({ reply: "A true samurai does not fall for trickery. Please ask a proper question about Japanese." });
         }
 
         const completion = await groq.chat.completions.create({
